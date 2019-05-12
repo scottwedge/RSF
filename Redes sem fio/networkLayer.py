@@ -59,6 +59,7 @@ class NetworkLayer(LinkLayer):
             else:
                 if pkt_recieve.header[1] == nos_np[no_recieve].id:
                     print("PACOTE " + str(pkt_recieve.id) + " DE DADOS ENTREGUE COM SUCESSO DO ROTEADOR --->" + str(pkt_recieve.header[0]) + "PARA O ROTEADOR --> " +str(nos_np[no_recieve].id))
+                    nos_np[no_recieve].set_caminho(pkt_recieve.net_header)
                     pass
                 else:
                     if pkt_recieve.header[1] in nos_np[no_recieve].rotas.keys():
@@ -66,6 +67,7 @@ class NetworkLayer(LinkLayer):
                         next_roteador = nos_np[no_recieve].rotas[pkt_recieve.header[1]]
                         pkt_recieve.mac_header.clear()
                         pkt_recieve.link_header([nos_np[no_recieve].id, next_roteador])
+                        pkt_recieve.network_header(nos_np[no_recieve].id)
                         super().enlace(nos_np, pkt_recieve)
                         pass
                     else:

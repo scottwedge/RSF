@@ -13,4 +13,7 @@ class Node(NetworkLayer):
 		self.rotas = {self.id : self.id}
 		#self.rotas = {}
 		self.pkt_recebidos = []
+
+	def set_caminho(self, saltos):
+		self.caminho = saltos
 	

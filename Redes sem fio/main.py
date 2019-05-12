@@ -10,6 +10,7 @@ import random
 import numpy as np
 import logging as log
 from scipy.spatial import distance
+import matplotlib.pyplot as plt
 
 log.basicConfig(filename='redes.log',filemode='w',level=log.DEBUG)
 
@@ -24,7 +25,12 @@ def GenerateNetwork(nodes,size, nos): # Função que cria a topologia da rede
                 lista.append(r)
                 nos.append(no.Node(i,rx,ry))
                 break
-
+            
+def connectpoints(x,y,p1,p2):
+    x1, x2 = x[p1], x[p2]
+    y1, y2 = y[p1], y[p2]
+    plt.plot([x1,x2],[y1,y2],'k-',color='red')
+    
 nos = []
 count = 0  
 pacotes = []     
@@ -51,22 +57,42 @@ if f.mode == 'r':
 
 #GenerateNetwork(4,1, nos)
 
+
+
+list_posx = []
+list_posy = []
+list_id_nos = []
 nos_np = np.array(nos)
 for i in nos_np:
     log.info(str(i.pos))
+    list_posx.append(i.pos[0])
+    list_posy.append(i.pos[1])
+    list_id_nos.append(str(i.id))
 
-pkt1 = pk.Packet(0, [0,0,0], 0, 1)
+
+pkt1 = pk.Packet(0, [0,0,0], 3, 2)
 #pkt1.link_header([0,1])
-pkt2 = pk.Packet(1, [0,0,1], 2, 1)
+#pkt2 = pk.Packet(1, [0,0,1], 2, 1)
 #pkt2.link_header([2,1])
-pkt3 = pk.Packet(2, [0,1,0], 0, 1)
+#pkt3 = pk.Packet(2, [0,1,0], 0, 1)
 #pkt3.link_header([0,1])
 
-pkt =  [pkt1, pkt2, pkt3]
+pkt =  [pkt1]
 
 qt_pkts = len(pkt)
 #print(qt_pkts)
 pkt_enviado = []
+
+print("PLT PLOT")
+print(nos_np[1].pos[0],nos_np[1].pos[1])
+#ax = plt.plot(list_posx,list_posy,'ro')
+ 
+fig, ax = plt.subplots()
+ax.scatter(list_posx, list_posy,100)
+
+for i,txt in enumerate(list_id_nos):
+    ax.annotate(txt,(list_posx[i]+0.02,list_posy[i]+0.02),color='blue')
+    
 
 id_flood = 10000
 tentativas = 0
@@ -86,6 +112,12 @@ while(True):
             pass
         if pkt[0].id in nos_np[pkt[0].header[1]].pkt_recebidos:
             print("MAIN ---- PACOTE " + str(pkt[0].id) + " ENVIADO COM SUCESSO")
+            #for n in pkt[0].net_header:
+                #connectpoints(list_posx,list_posy,n,n+1)
+            while(len(pkt[0].net_header)-1):
+                connectpoints(list_posx,list_posy,pkt[0].net_header[0],pkt[0].net_header[1])
+                pkt[0].net_header.pop(0)
+            connectpoints(list_posx,list_posy,pkt[0].net_header[0],pkt[0].header[1])
             pkt.pop(0)
         else:
             tentativas += 1
