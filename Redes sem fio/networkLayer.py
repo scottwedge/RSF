@@ -25,7 +25,7 @@ class NetworkLayer(LinkLayer):
         pass
 
     def net_recieve(self, pkt_recieve, nos_np, no_recieve):
-        print("-------NET RECIEVE-------")
+        print("-------NET RECEIVE-------")
         if pkt_recieve.id in nos_np[no_recieve].pkt_recebidos:
             print("------- JÁ RECEBI ESSE PACOTE -------")
         else:
